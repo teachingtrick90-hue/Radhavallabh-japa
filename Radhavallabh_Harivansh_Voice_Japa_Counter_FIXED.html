@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shri Radhavallabh Shri Harivansh - Japa Counter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff9f2;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255, 180, 100, 0.35) 0%, rgba(255, 180, 100, 0.35) 70px, transparent 71px),
+                radial-gradient(circle at 50% 50%, rgba(255, 180, 100, 0.25) 120px, transparent 121px),
+                radial-gradient(circle at 50% 50%, rgba(255, 180, 100, 0.18) 200px, transparent 201px),
+                radial-gradient(circle at 50% 50%, rgba(255, 180, 100, 0.12) 310px, transparent 311px),
+                radial-gradient(circle at 50% 50%, rgba(255, 180, 100, 0.08) 450px, transparent 451px);
+            padding: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 36px;
+            padding: 40px 30px 35px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(230, 100, 30, 0.08), 0 6px 16px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: #e65100;
+            letter-spacing: 0.2px;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #888888;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .counter-box {
+            cursor: pointer;
+            width: 100%;
+            padding: 10px 0;
+            transition: transform 0.1s;
+        }
+
+        .counter-box:active {
+            transform: scale(0.97);
+        }
+
+        .counter-number {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 4.8rem;
+            font-weight: 700;
+            color: #d81b60;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .remaining-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #666666;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .progress-section {
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff8a65, #e91e63);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #aaaaaa;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .status-box {
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: #666666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 24px;
+        }
+
+        .main-btn {
+            margin-top: 20px;
+            width: 100%;
+            background: linear-gradient(135deg, #f57c00, #d81b60);
+            color: #ffffff;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 20px rgba(245, 124, 0, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .main-btn:hover {
+            box-shadow: 0 10px 25px rgba(245, 124, 0, 0.45);
+        }
+
+        .main-btn.listening {
+            background: linear-gradient(135deg, #2b9348, #55a630);
+            box-shadow: 0 8px 20px rgba(43, 147, 72, 0.35);
+        }
+
+        .reset-btn {
+            margin-top: 30px;
+            background: transparent;
+            border: none;
+            color: #aaaaaa;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .reset-btn:hover {
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1 class="title">राधावल्लभ श्री हरिवंश</h1>
+        <div class="subtitle">Voice Japa Counter</div>
+
+        <div class="counter-box" id="counterBox" title="Click to count manually">
+            <div class="counter-number" id="remainingCount">50,000</div>
+            <div class="remaining-label">REMAINING</div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-labels">
+                <span>0</span>
+                <span>Goal: 50K</span>
+            </div>
+        </div>
+
+        <div class="status-box">
+            <span id="statusIcon">⏹</span>
+            <span id="statusText">Start Chanting पर क्लिक करें</span>
+        </div>
+        <div style="font-size:.72rem;color:#999;margin-top:6px;line-height:1.4;">
+            Voice counting के लिए HTTPS website और Microphone permission जरूरी है।
+        </div>
+
+        <button class="main-btn" id="startBtn">
+            <span id="btnIcon">⏹</span>
+            <span id="btnText">Start Chanting</span>
+        </button>
+
+        <button class="reset-btn" id="resetBtn">
+            <span>🔄</span> Reset Progress
+        </button>
+    </div>
+
+    <script>
+        const TOTAL_GOAL = 50000;
+        let count = 0;
+        let recognition = null;
+        let isListening = false;
+        let lastChantTime = 0;
+        const CHANT_COOLDOWN = 1100; // "राधावल्लभ श्री हरिवंश" पूरा बोलने के लिए सटीक टाइमर (1.1 sec)
+
+        const remainingDisplay = document.getElementById('remainingCount');
+        const progressFill = document.getElementById('progressFill');
+        const statusText = document.getElementById('statusText');
+        const statusIcon = document.getElementById('statusIcon');
+        const startBtn = document.getElementById('startBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+        const resetBtn = document.getElementById('resetBtn');
+        const counterBox = document.getElementById('counterBox');
+
+        function loadProgress() {
+            const saved = localStorage.getItem('radhavallabh_harivansh_count');
+            if (saved !== null) {
+                count = parseInt(saved, 10) || 0;
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const remaining = Math.max(0, TOTAL_GOAL - count);
+            remainingDisplay.innerText = remaining.toLocaleString('en-US');
+            
+            const progressPercent = Math.min((count / TOTAL_GOAL) * 100, 100);
+            progressFill.style.width = progressPercent + '%';
+
+            localStorage.setItem('radhavallabh_harivansh_count', count);
+        }
+
+        function registerChant() {
+            if (count >= TOTAL_GOAL) return;
+
+            const now = Date.now();
+            if (now - lastChantTime < CHANT_COOLDOWN) return;
+            lastChantTime = now;
+
+            count++;
+            updateDisplay();
+        }
+
+        counterBox.addEventListener('click', registerChant);
+
+        // Speech Recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'hi-IN';
+
+            recognition.onstart = () => {
+                isListening = true;
+                startBtn.classList.add('listening');
+                btnText.innerText = 'Listening...';
+                btnIcon.innerText = '🎙️';
+                statusText.innerText = 'माइक चालू है ("राधावल्लभ श्री हरिवंश" बोलें)';
+                statusIcon.innerText = '🎙️';
+            };
+
+            recognition.onerror = (e) => {
+                if (e.error === 'not-allowed') {
+                    statusText.innerText = 'माइक की अनुमति दें (Permission denied)';
+                    stopListening();
+                }
+            };
+
+            recognition.onend = () => {
+                if (isListening) {
+                    try { recognition.start(); } catch(err) {}
+                } else {
+                    startBtn.classList.remove('listening');
+                    btnText.innerText = 'Start Chanting';
+                    btnIcon.innerText = '⏹';
+                    statusText.innerText = 'Start Chanting पर क्लिक करें';
+                    statusIcon.innerText = '⏹';
+                }
+            };
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                
+                const text = transcript.toLowerCase();
+                
+                // Matches "राधावल्लभ श्री हरिवंश", "हरिवंश", "राधावल्लभ"
+                if (text.includes('राधावल्लभ') || text.includes('हरिवंश') || text.includes('radhavallabh') || text.includes('harivansh')) {
+                    registerChant();
+                }
+            };
+        } else {
+            statusText.innerText = 'यह ब्राउज़र वॉइस रिकग्निशन सपोर्ट नहीं करता';
+            startBtn.style.display = 'none';
+        }
+
+        async function startListening() {
+            if (!recognition) return;
+
+            // SpeechRecognition microphone access requires a secure origin
+            // (HTTPS, localhost, or an installed app with an appropriate origin).
+            if (!window.isSecureContext) {
+                statusText.innerText = 'माइक के लिए इस पेज को HTTPS website पर खोलें';
+                statusIcon.innerText = '⚠️';
+                return;
+            }
+
+            try {
+                // Explicitly request microphone permission first.
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+
+                isListening = true;
+                recognition.start();
+            } catch (e) {
+                isListening = false;
+                statusIcon.innerText = '⚠️';
+                if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+                    statusText.innerText = 'Microphone blocked — Chrome Settings में Microphone Allow करें';
+                } else {
+                    statusText.innerText = 'Microphone उपलब्ध नहीं है';
+                }
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+            }
+        }
+
+        startBtn.addEventListener('click', async () => {
+            if (!isListening) {
+                await startListening();
+            } else {
+                stopListening();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            if (confirm("गिनती पुनः 50,000 से शुरू करें?")) {
+                count = 0;
+                updateDisplay();
+            }
+        });
+
+        loadProgress();
+    </script>
+</body>
+</html>
